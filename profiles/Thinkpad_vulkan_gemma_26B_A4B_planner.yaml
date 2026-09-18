@@ -1,0 +1,66 @@
+name: "Thinkpad_vulkan_gemma_26B_A4B"
+description: "Unsloth QAT compression. Almost no quantization errors. However, it is a 17 GB file. Hence, reduced context."
+
+# For parameter descriptions, see here: https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md
+defaults:
+  model: "gemma"   # → defaults/models/gemma.yaml
+  engine: "vulkan-intel"  # → instances/<name>/engines/vulkan-intel.yaml
+
+common:
+  m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf" # Only 14.2 GB with almost no quantization errors!
+#  c: 32768 # possible, but brings memory consumption of laptop strongly down
+  c: 16384
+  threads: 4
+  # The memory architecture MUST be global. With q4, a larger context is possible
+#  cache-type-k: "q4_0"
+#  cache-type-v: "q4_0"
+  cache-type-k: "q4_0"
+  cache-type-v: "q4_0"
+  # Flash Attention MUST be global if the cache is quantized
+  flash-attn: true
+  # Vulkan specific:
+  split-mode: none
+  main-gpu: 0
+  n-gpu-layers: 99 #ngl
+
+# These parameters are ONLY appended in 'serve' mode
+serve:
+  # mmproj: "${LLAMA_MODEL_ROOT}/mmproj-F16-qat.gguf"
+  # image-min-tokens: 300
+  # image-max-tokens: 512
+  ubatch-size: 512
+  batch-size: 256
+  parallel: 1
+  cont-batching: true
+  jinja: true # required for Gemma 4
+  # if not defined in ensemble:
+  port: 8081
+  host: "0.0.0.0"
+  #  sampling: # for Sparringpartner
+
+  #  temperature: 1.0
+  #  top_p: 0.95
+  #  top_k: 64
+  cache-ram: 0 # prevents crashes
+  no-kv-offload: true
+  # kv-unified: true
+  ctx-checkpoints: 0
+  # lv: 4 # debugging
+
+# These parameters are ONLY appended in 'bench' mode
+bench:
+  r: 1
+  pg:
+      - [512, 128]           # Reference: Almost empty cache
+      - [1024, 128]
+      - [2048, 128]
+      - [4096, 128]
+      - [8192, 128]
+      - [16384, 128]
+      - [32768, 128]         # Moderate context
+      - [65536, 128]         # High context
+      - ["MAX_CONTEXT", 128] # Absolute limit
+eval:
+  c: 8192   # Overwrites the common section only for Perplexity
+  b: 512    # Safe batch value for logit calculation
+  ot: null  # Removes inheritance from 'common', flag is omitted

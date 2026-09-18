@@ -1,0 +1,13 @@
+# Dispatcher runtime data (environment-local)
+data/metrics.db
+data/thinkpad_models.ini
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/

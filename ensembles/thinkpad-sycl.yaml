@@ -1,0 +1,32 @@
+# SYCL ensemble for the Laptop instance.
+# Runtime paths are supplied by the launcher; device selection comes from engines/sycl.yaml.
+
+defaults:
+  engine: "sycl"
+
+dispatcher:
+  port: 8001
+
+engine:
+  port: 8081
+  host: "0.0.0.0"
+  models_max: 1
+
+models:
+  - profile: "Thinkpad_SYCL_gemma_26B_A4B"
+    alias: "sparringpartner"
+    load-on-startup: true
+    chat_template_kwargs:
+      enable_thinking: true
+
+  - profile: "Thinkpad_SYCL_gemma_26B_A4B"
+    alias: "agent"
+    target: "sparringpartner"
+    chat_template_kwargs:
+      enable_thinking: false
+    sampling:
+      temperature: 0.3
+      top_k: 20
+      top_p: 0.9
+      min_p: 0.1
+      repeat_penalty: 1.1

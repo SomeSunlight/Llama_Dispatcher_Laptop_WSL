@@ -1,0 +1,41 @@
+# Vulkan/Intel ensemble for the Laptop instance.
+# GPU selection comes from engines/vulkan-intel.yaml; no caller environment setup is required.
+
+defaults:
+  engine: "vulkan-intel"  # → instances/Laptop/engines/vulkan-intel.yaml
+
+dispatcher:
+  port: 8001  # Dispatcher-Proxy port (clients point here)
+
+engine:
+  port: 8081  # llama.cpp server port (internal; Dispatcher forwards there)
+  host: "0.0.0.0"
+  models_max: 1
+
+models:
+  # ── Sparringpartner ─────────────────────────────────────────────────────────
+  # Real llama.cpp model (occupies VRAM). For discussions, analysis, orchestration.
+  # Actively thinks before answering (enable_thinking: true).
+  # Sampling defaults come from the profile itself below
+  - profile: "Thinkpad_vulkan_gemma_26B_A4B"
+    alias: "sparringpartner"
+    load-on-startup: true
+    chat_template_kwargs:
+      enable_thinking: true
+
+  # ── Agent ───────────────────────────────────────────────────────────────────
+  # Proxy-only: no own VRAM entry. Forwards to "sparringpartner".
+  # For precise task execution: no thinking, low temperature, focused sampling.
+  # The proxy rewrites "model: agent" → "model: sparringpartner" and injects
+  # the parameters below into every request – uniformly for all clients.
+  - profile: "Thinkpad_vulkan_gemma_26B_A4B"
+    alias: "agent"
+    target: "sparringpartner"
+    chat_template_kwargs:
+      enable_thinking: false
+    sampling:
+      temperature: 0.3   # precise, little randomness
+      top_k: 20          # only the 20 most likely tokens
+      top_p: 0.9
+      min_p: 0.1         # cuts off unlikely tokens sharply
+      repeat_penalty: 1.1  # prevents repetitions in long tasks
