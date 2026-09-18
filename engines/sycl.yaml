@@ -5,3 +5,5 @@ bin_dir: 'c:\llama.cpp\server\server_07_SYCL'
 environment:
   # Prefer the Level Zero GPU deterministically instead of relying on caller shell state.
   ONEAPI_DEVICE_SELECTOR: "level_zero:0"
+  # Enable Level Zero Sysman so llama.cpp can query actual free device memory.
+  ZES_ENABLE_SYSMAN: "1"
