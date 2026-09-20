@@ -20,9 +20,6 @@ serve:
   parallel: 1
   cont-batching: true
   jinja: true
-  # Standalone profile defaults. Ensemble mode uses ensemble.engine host/port instead.
-  port: 8081
-  host: "0.0.0.0"
   ctx-checkpoints: 0
 
 bench:
