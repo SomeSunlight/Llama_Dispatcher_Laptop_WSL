@@ -11,6 +11,8 @@ common:
   threads: 6
   cache-type-k: "q4_0"
   cache-type-v: "q4_0"
+  flash-attn: true
+  n-gpu-layers: 99
 
 serve:
   ubatch-size: 256
@@ -18,6 +20,7 @@ serve:
   parallel: 1
   cont-batching: true
   jinja: true
+  # Standalone profile defaults. Ensemble mode uses ensemble.engine host/port instead.
   port: 8081
   host: "0.0.0.0"
   cache-ram: 0
