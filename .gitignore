@@ -1,6 +1,6 @@
 # Dispatcher runtime data (environment-local)
-data/metrics.db
-data/thinkpad_models.ini
+data/*.db
+data/*_models.ini
 *.db-shm
 *.db-wal
 
