@@ -22,9 +22,6 @@ serve:
   parallel: 1
   cont-batching: true
   jinja: true
-  # Standalone profile defaults. Ensemble mode uses ensemble.engine host/port instead.
-  port: 8081
-  host: "0.0.0.0"
   spec-type: "draft-mtp"
   spec-draft-n-max: 1
   model-draft: "${LLAMA_MODEL_ROOT}/mtp-gemma-4-26B-A4B-it.gguf"
