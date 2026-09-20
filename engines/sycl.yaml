@@ -6,7 +6,5 @@ environment:
   ZES_ENABLE_SYSMAN: "1"
 
 common:
-  n-gpu-layers: 99
   split-mode: none
   main-gpu: 0
-  flash-attn: true
