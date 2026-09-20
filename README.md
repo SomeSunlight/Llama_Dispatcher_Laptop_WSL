@@ -1,100 +1,113 @@
-# Llama_Dispatcher – Instance: Laptop
+# Llama_Dispatcher – Instance: Laptop_WSL
 
-This repository contains the versioned configuration of the **Laptop** instance for [Llama_Dispatcher](https://github.com/SomeSunlight/Llama_Dispatcher). The same configuration is intended to be usable from Windows and WSL; environment-local runtime paths and generated data stay outside the repository.
+This repository contains the versioned **WSL-specific** configuration for the `Laptop_WSL` instance of [Llama_Dispatcher](https://github.com/SomeSunlight/Llama_Dispatcher).
+
+Windows is intentionally a separate instance. This repository contains only portable model references and WSL backend/profile policy; machine-local llama.cpp binaries and generated runtime data stay outside Git.
 
 ## Content
 
-| Directory / File | Description |
+| Directory / File | Purpose |
 |---|---|
-| `instance.yaml` | Machine GUID and nickname of this instance |
-| `profiles/` | YAML profiles with model-relative paths and llama.cpp parameters |
-| `ensembles/` | Backend-specific model/alias compositions |
-| `engines/` | Hardware/backend policy, including process environment such as GPU selection |
+| `instance.yaml` | Stable identity of the WSL instance |
+| `profiles/` | Model/runtime profiles for Intel SYCL, Intel Vulkan and RTX 500 Vulkan experiments |
+| `ensembles/` | Client-facing model aliases and backend-specific compositions |
+| `engines/` | Backend/device policy and process environment |
 
-Runtime data deliberately does **not** belong to the instance repository:
+Runtime data is intentionally local:
 
-- `data/metrics.db` is created locally by the Dispatcher and remains specific to that environment.
-- generated router presets are recreated locally.
-- SQLite WAL/SHM files are local runtime state as well.
+- `data/*.db` contains Dispatcher metrics for this WSL instance.
+- generated `data/*_models.ini` router presets are recreated locally.
+- SQLite WAL/SHM files are local runtime state.
 
-This keeps Windows and WSL runs separate even when they use the same versioned Laptop configuration.
+## Runtime paths
 
-## Portable model paths
-
-Profiles use `${LLAMA_MODEL_ROOT}` instead of embedding `C:\...` or `/mnt/c/...` roots:
+Profiles use `${LLAMA_MODEL_ROOT}` instead of embedding a Windows or WSL model root:
 
 ```yaml
 common:
   m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf"
 ```
 
-The concrete root is runtime input. A managed launcher such as AI Workstation passes it explicitly with `--model-root`; direct/manual Dispatcher use may use the same CLI option. The optional `LLAMA_MODEL_ROOT` process environment variable is only a fallback supported by Dispatcher, not a prerequisite that must be placed in a shell profile.
+AI Workstation normally supplies both concrete runtime roots:
 
-## Engine-owned device selection
+- `--model-root` selects the machine-local GGUF root;
+- `--bin-dir` selects the concrete llama.cpp build.
 
-GPU-selection environment belongs to the engine rather than to startup instructions in each profile:
+The engines therefore contain **no `bin_dir`**. Their job is backend and device policy, not installation-path ownership.
+
+## Engines
+
+### `sycl`
+
+Intel integrated GPU through SYCL / Level Zero.
 
 ```yaml
 environment:
-  GGML_VK_VISIBLE_DEVICES: "0"
+  ONEAPI_DEVICE_SELECTOR: "level_zero:0"
+  ZES_ENABLE_SYSMAN: "1"
 ```
 
-Dispatcher applies the engine environment when it launches llama.cpp. The caller therefore does not have to remember `$env:GGML_VK_VISIBLE_DEVICES=...` or export it in WSL.
+The temporary OpenCL path used during Issue #1/#8 diagnosis is not retained as a normal engine. It was a diagnostic control, while Level Zero is the versioned SYCL target.
 
-The Laptop currently distinguishes these engines explicitly:
+### `vulkan-intel`
 
-- `vulkan-intel` — Vulkan device `0`;
-- `vulkan-rtx500` — Vulkan device `1`;
-- `sycl` — Intel Level Zero device selected through `ONEAPI_DEVICE_SELECTOR=level_zero:0`.
+Intel Vulkan path, explicitly selecting Vulkan device 0.
 
-This is deliberate hardware policy, not an operating-system path difference. Profiles point to the engine that matches the hardware they are designed for.
+### `vulkan-rtx500`
 
-## Associated Dispatcher
+RTX 500 Ada Vulkan path, explicitly selecting Vulkan device 1.
 
-The Dispatcher itself (code, defaults, documentation) is located in the public repo:
-https://github.com/SomeSunlight/Llama_Dispatcher
+Vulkan device numbering must still be verified on the actual WSL Vulkan implementation before performance results are treated as accepted evidence.
+
+## Standalone profiles versus ensembles
+
+Network settings are intentionally separated from the model profiles:
+
+- `engines/*.yaml -> serve.host/port` provides the default address for **direct single-profile serve**.
+- `ensembles/*.yaml -> engine.host/port` owns the llama.cpp router address in **ensemble mode**.
+- profiles therefore contain model/runtime tuning only and can still be started directly without repeating host/port on the command line.
+
+The Dispatcher merge/compile logic keeps these two cases separate: direct profile serve inherits the engine `serve` defaults, while ensemble model sections do not use those host/port values.
+
+## Ensembles
+
+- `thinkpad-sycl` — current Intel SYCL / Level Zero ensemble using `Thinkpad_SYCL_gemma_26B_A4B`.
+- `thinkpad` — Intel Vulkan ensemble using `Thinkpad_vulkan_gemma_26B_A4B`.
+
+Both expose:
+
+- `sparringpartner` — real loaded model with thinking enabled;
+- `agent` — proxy-only alias targeting the same loaded model with thinking disabled and more deterministic sampling.
 
 ## Setup in a Dispatcher checkout
 
-The main repo and the instance repo must be cloned into the exact expected directories. `git clone <url> <target_directory>` gives the instance repository the required directory name:
-
 ```bash
-# 1. Clone main repo
 git clone https://github.com/SomeSunlight/Llama_Dispatcher.git
 cd Llama_Dispatcher
 
-# 2. Clone this instance into the Dispatcher's user-owned instance area
-git clone https://github.com/SomeSunlight/Llama_Dispatcher_Laptop.git instances/Laptop
+git clone https://github.com/SomeSunlight/Llama_Dispatcher_Laptop_WSL.git \
+  instances/Laptop_WSL
 
-# 3. Set up Python environment
 uv sync
 ```
 
-The Dispatcher creates `instances/Laptop/data/metrics.db` locally when needed. Do not copy another environment's database unless historical metrics are intentionally being migrated.
-
-`instance.yaml` carries the instance identity. When this configuration is reused in a materially different environment, review the identity before recording benchmark history.
-
-## Windows and WSL
-
-The model files and versioned profile semantics are shared. Machine-local binary and model roots are supplied at process start and are not duplicated in the instance repository.
-
-For WSL/SYCL use the dedicated `thinkpad-sycl` ensemble. The existing `thinkpad` ensemble remains the Intel/Vulkan configuration. Backend-specific differences are kept separate where they are real; filesystem-root differences are not duplicated.
-
-A WSL run should normally keep its own local database even when Windows tests continue in parallel.
+The Dispatcher creates `instances/Laptop_WSL/data/metrics.db` locally when required. Do not copy another instance's database unless historical measurements are intentionally being migrated.
 
 ## Usage
 
-Direct Dispatcher example:
+With AI Workstation, configure the instance and ensemble once and let AI Workstation supply the concrete llama.cpp build and model root.
+
+A direct Dispatcher invocation is still possible:
 
 ```bash
 uv run src/dispatcher.py serve \
   --ensemble thinkpad-sycl \
-  --instance Laptop \
+  --instance Laptop_WSL \
   --bin-dir /path/to/llama.cpp/build/bin \
   --model-root /path/to/models
 ```
 
-When AI Workstation manages the runtime, configure these local paths once there and use its simple start/stop commands instead of this full invocation.
+The `machine_guid` in `instance.yaml` identifies this WSL measurement history. Do not reuse it for a distinct Windows instance.
 
 ## License
 

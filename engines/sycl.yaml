@@ -1,8 +1,15 @@
-# Intel SYCL engine for the Laptop instance.
+# Intel SYCL / Level Zero engine for the Laptop_WSL instance.
+# AI Workstation supplies the concrete llama.cpp binary directory at runtime.
 
 environment:
-  # Prefer the Level Zero GPU deterministically instead of relying on caller shell state.
   ONEAPI_DEVICE_SELECTOR: "level_zero:0"
-  # ONEAPI_DEVICE_SELECTOR: "opencl:gpu"
-  # Enable Level Zero Sysman so llama.cpp can query actual free device memory.
   ZES_ENABLE_SYSMAN: "1"
+
+common:
+  split-mode: none
+  main-gpu: 0
+
+# Defaults for direct single-profile serve. Ensembles own their router host/port.
+serve:
+  host: "0.0.0.0"
+  port: 8081

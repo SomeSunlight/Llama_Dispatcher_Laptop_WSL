@@ -1,60 +1,45 @@
-name: "Test"
-description: "Unsloth QAT compression. Almost no quantization errors. However, it is a 17 GB file. Hence, reduced context."
+name: "Thinkpad_vulkan_gemma_26B_A4B_MTP"
+description: "MTP speculative-decoding variant of the Gemma 4 26B-A4B QAT profile for Intel Vulkan experiments; 64K context and Q8 KV cache."
 
-# For parameter descriptions, see here: https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md
 defaults:
-  model: "gemma"   # → defaults/models/gemma.yaml
-  engine: "vulkan-intel"  # → instances/<name>/engines/vulkan-intel.yaml
+  model: "gemma"
+  engine: "vulkan-intel"
 
 common:
-  m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf" # Only 14.2 GB with almost no quantization errors!
-  # c: 262000
+  m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf"
   c: 65536
-  # ngl: 99
   threads: 16
-  # The memory architecture MUST be global. With q4, a larger context is possible
-  cache-type-k: "q8_0" # unfortunately not q8, due to large model
-  cache-type-v: "q8_0" # unfortunately not q8, due to large model
-  # Flash Attention MUST be global if the cache is quantized
+  cache-type-k: "q8_0"
+  cache-type-v: "q8_0"
   flash-attn: true
-  # Vulkan specific:
-  split-mode: none
-  main-gpu: 0
   n-gpu-layers: 99
 
-# These parameters are ONLY appended in 'serve' mode
 serve:
-  # mmproj: "${LLAMA_MODEL_ROOT}/mmproj-F16-qat.gguf"
   image-min-tokens: 300
   image-max-tokens: 512
   ubatch-size: 2048
   batch-size: 2048
   parallel: 1
   cont-batching: true
-  jinja: true # required for Gemma 4
-  # if not defined in ensemble:
-  port: 8081
-  host: "0.0.0.0"
-
-  # MTP support. Not supported by llama bench. See discussion with Gemini 3.1 pro on 10.06.2026
+  jinja: true
   spec-type: "draft-mtp"
   spec-draft-n-max: 1
   model-draft: "${LLAMA_MODEL_ROOT}/mtp-gemma-4-26B-A4B-it.gguf"
 
-# These parameters are ONLY appended in 'bench' mode
 bench:
   r: 1
   pg:
-      - [512, 128]           # Reference: Almost empty cache
-      - [1024, 128]
-      - [2048, 128]
-      - [4096, 128]
-      - [8192, 128]
-      - [16384, 128]
-      - [32768, 128]         # Moderate context
-      - [65536, 128]         # High context
-      - ["MAX_CONTEXT", 128] # Absolute limit
+    - [512, 128]
+    - [1024, 128]
+    - [2048, 128]
+    - [4096, 128]
+    - [8192, 128]
+    - [16384, 128]
+    - [32768, 128]
+    - [65536, 128]
+    - ["MAX_CONTEXT", 128]
+
 eval:
-  c: 8192   # Overwrites the common section only for Perplexity
-  b: 512    # Safe batch value for logit calculation
-  ot: null  # Removes inheritance from 'common', flag is omitted
+  c: 8192
+  b: 512
+  ot: null
