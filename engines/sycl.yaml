@@ -8,3 +8,8 @@ environment:
 common:
   split-mode: none
   main-gpu: 0
+
+# Defaults for direct single-profile serve. Ensembles own their router host/port.
+serve:
+  host: "0.0.0.0"
+  port: 8081
