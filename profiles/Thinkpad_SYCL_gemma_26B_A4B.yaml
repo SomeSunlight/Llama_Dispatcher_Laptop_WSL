@@ -10,12 +10,12 @@ common:
   m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf" # Only 14.2 GB with almost no quantization errors!
 #  c: 32768 # possible, but brings memory consumtion of laptop strongly down
   c: 16384
-  threads: 1
+  threads: 6
   # The memory architecture MUST be global. With q4, a larger context is possible
-#  cache-type-k: "q4_0"
-#  cache-type-v: "q4_0"
-  cache-type-k: "q8_0"
-  cache-type-v: "q8_0"
+#  cache-type-k: "q8_0"
+#  cache-type-v: "q8_0"
+  cache-type-k: "q4_0"
+  cache-type-v: "q4_0"
   # Flash Attention MUST be global if the cache is quantized
   flash-attn: true
   # Backend-specific:

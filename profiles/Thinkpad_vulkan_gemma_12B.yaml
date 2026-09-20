@@ -1,5 +1,5 @@
-name: "Test"
-description: "Unsloth QAT compression. Almost no quantization errors. However, it is a 17 GB file. Hence, reduced context."
+name: "Thinkpad_vulkan_gemma_12B"
+description: "Unsloth QAT compression. Almost no quantization errors"
 
 # For parameter descriptions, see here: https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md
 defaults:

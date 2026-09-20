@@ -1,5 +1,5 @@
-name: "Test"
-description: "Unsloth QAT compression. Almost no quantization errors. However, it is a 17 GB file. Hence, reduced context."
+name: "Thinkpad_SYCL_gemma_12B"
+description: "Unsloth QAT compression. Almost no quantization errors"
 
 # For parameter descriptions, see here: https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md
 defaults:
@@ -28,15 +28,16 @@ serve:
   # mmproj: "${LLAMA_MODEL_ROOT}/mmproj-F16-qat.gguf"
   # image-min-tokens: 300
   # image-max-tokens: 512
-  ubatch-size: 2048
-  batch-size: 2048
+  # ubatch-size: 2048
+  # batch-size: 2048
+  ubatch-size: 256
+  batch-size: 256
   parallel: 1
   cont-batching: true
   jinja: true # required for Gemma 4
   # if not defined in ensemble:
   port: 8081
   host: "0.0.0.0"
-
   cache-ram: 0
   # kv-unified: true
   ctx-checkpoints: 0

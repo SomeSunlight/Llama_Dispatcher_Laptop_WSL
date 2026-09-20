@@ -1,7 +1,4 @@
 # Intel Vulkan engine for the Laptop instance.
-# bin_dir remains a Windows/manual fallback; managed launchers override it with --bin-dir.
-bin_dir: 'c:\llama.cpp\server\server_06_vulcan'
-
 environment:
   # Keep GPU selection with the engine so callers never need to remember it.
   GGML_VK_VISIBLE_DEVICES: "0"
