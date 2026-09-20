@@ -1,0 +1,34 @@
+# Intel Vulkan ensemble for Laptop_WSL.
+# Runtime paths come from the launcher; GPU selection comes from engines/vulkan-intel.yaml.
+
+defaults:
+  engine: "vulkan-intel"
+
+dispatcher:
+  port: 8001
+
+engine:
+  port: 8081
+  host: "0.0.0.0"
+  models-max: 1
+
+models:
+  # Real llama.cpp model used for discussion, analysis and orchestration.
+  - profile: "Thinkpad_vulkan_Qwen_35B_A3B"
+    alias: "sparringpartner"
+    load-on-startup: true
+    chat_template_kwargs:
+      enable_thinking: true
+
+  # Proxy-only alias sharing the loaded model with more deterministic sampling.
+  - profile: "Thinkpad_vulkan_Qwen_35B_A3B"
+    alias: "agent"
+    target: "sparringpartner"
+    chat_template_kwargs:
+      enable_thinking: false
+    sampling:
+      temperature: 0.3
+      top-k: 20
+      top-p: 0.9
+      min-p: 0.1
+      repeat-penalty: 1.1

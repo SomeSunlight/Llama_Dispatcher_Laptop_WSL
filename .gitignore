@@ -1,6 +1,5 @@
 # Dispatcher runtime data (environment-local)
-data/*.db
-data/*_models.ini
+data/
 *.db-shm
 *.db-wal
 

@@ -1,14 +1,14 @@
-name: "Thinkpad_vulkan_gemma_26B_A4B"
-description: "Gemma 4 26B-A4B QAT workhorse profile for Intel Vulkan experiments; 16K context and Q4 KV cache with Vulkan offload policy supplied by the engine."
+name: "Thinkpad_vulkan_Qwen_35B_A3B"
+description: "Test qwen"
 
 defaults:
-  model: "gemma"
+  model: "qwen"
   engine: "vulkan-intel"
 
 common:
-  m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf"
-  c: 16384
-  threads: 1
+  m: "${LLAMA_MODEL_ROOT}/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf"
+  c: 8192
+  threads: 3
   cache-type-k: "q4_0"
   cache-type-v: "q4_0"
   flash-attn: true
@@ -21,7 +21,7 @@ serve:
   cont-batching: true
   jinja: true
   ctx-checkpoints: 0
-  no-kv-offload: true
+  no-kv-offload: false
 
 bench:
   r: 1
