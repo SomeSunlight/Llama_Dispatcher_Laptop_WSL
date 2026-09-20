@@ -59,6 +59,16 @@ RTX 500 Ada Vulkan path, explicitly selecting Vulkan device 1.
 
 Vulkan device numbering must still be verified on the actual WSL Vulkan implementation before performance results are treated as accepted evidence.
 
+## Standalone profiles versus ensembles
+
+Network settings are intentionally separated from the model profiles:
+
+- `engines/*.yaml -> serve.host/port` provides the default address for **direct single-profile serve**.
+- `ensembles/*.yaml -> engine.host/port` owns the llama.cpp router address in **ensemble mode**.
+- profiles therefore contain model/runtime tuning only and can still be started directly without repeating host/port on the command line.
+
+The Dispatcher merge/compile logic keeps these two cases separate: direct profile serve inherits the engine `serve` defaults, while ensemble model sections do not use those host/port values.
+
 ## Ensembles
 
 - `thinkpad-sycl` — current Intel SYCL / Level Zero ensemble using `Thinkpad_SYCL_gemma_26B_A4B`.
