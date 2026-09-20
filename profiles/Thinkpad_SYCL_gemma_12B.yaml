@@ -1,61 +1,42 @@
 name: "Thinkpad_SYCL_gemma_12B"
-description: "Unsloth QAT compression. Almost no quantization errors"
+description: "Gemma 4 12B QAT profile for the Intel integrated GPU through SYCL/Level Zero; 16K context with conservative 256 batch and ubatch settings."
 
-# For parameter descriptions, see here: https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md
 defaults:
-  model: "gemma"   # → defaults/models/gemma.yaml
-  engine: "sycl"  # → instances/<name>/engines/sycl.yaml
+  model: "gemma"
+  engine: "sycl"
 
 common:
-  # m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf" # Only 14.2 GB with almost no quantization errors!
-  m: "${LLAMA_MODEL_ROOT}/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf" # Only 14.2 GB with almost no quantization errors!
-  # c: 262000
-  # c: 65536
+  m: "${LLAMA_MODEL_ROOT}/gemma-4-12B-it-qat-UD-Q4_K_XL.gguf"
   c: 16384
-  threads: 6 # for quiet background operation. threads: 14 would be maximum operation. See discussion with Gemini 3.1 pro on 10.06.2026
-  # The memory architecture MUST be global. With q4, a larger context is possible
-  cache-type-k: "q4_0" # unfortunately not q8, due to large model
-  cache-type-v: "q4_0" # unfortunately not q8, due to large model
-  # Flash Attention MUST be global if the cache is quantized
-  flash-attn: true
-  # Backend-specific:
-  split-mode: none
-  main-gpu: 0
-  n-gpu-layers: 99 #ngl
+  threads: 6
+  cache-type-k: "q4_0"
+  cache-type-v: "q4_0"
 
-# These parameters are ONLY appended in 'serve' mode
 serve:
-  # mmproj: "${LLAMA_MODEL_ROOT}/mmproj-F16-qat.gguf"
-  # image-min-tokens: 300
-  # image-max-tokens: 512
-  # ubatch-size: 2048
-  # batch-size: 2048
   ubatch-size: 256
   batch-size: 256
   parallel: 1
   cont-batching: true
-  jinja: true # required for Gemma 4
-  # if not defined in ensemble:
+  jinja: true
   port: 8081
   host: "0.0.0.0"
   cache-ram: 0
-  # kv-unified: true
   ctx-checkpoints: 0
 
-# These parameters are ONLY appended in 'bench' mode
 bench:
   r: 1
   pg:
-      - [512, 128]           # Reference: Almost empty cache
-      - [1024, 128]
-      - [2048, 128]
-      - [4096, 128]
-      - [8192, 128]
-      - [16384, 128]
-      - [32768, 128]         # Moderate context
-      - [65536, 128]         # High context
-      - ["MAX_CONTEXT", 128] # Absolute limit
+    - [512, 128]
+    - [1024, 128]
+    - [2048, 128]
+    - [4096, 128]
+    - [8192, 128]
+    - [16384, 128]
+    - [32768, 128]
+    - [65536, 128]
+    - ["MAX_CONTEXT", 128]
+
 eval:
-  c: 8192   # Overwrites the common section only for Perplexity
-  b: 512    # Safe batch value for logit calculation
-  ot: null  # Removes inheritance from 'common', flag is omitted
+  c: 8192
+  b: 512
+  ot: null
