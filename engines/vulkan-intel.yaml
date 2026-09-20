@@ -12,4 +12,7 @@ common:
 serve:
   host: "0.0.0.0"
   port: 8081
+  # Laptop Vulkan baseline: keep KV cache in host/shared memory by default.
+  # Profiles may override this only for a backend/model combination validated separately.
+  no-kv-offload: true
   cache-ram: 0

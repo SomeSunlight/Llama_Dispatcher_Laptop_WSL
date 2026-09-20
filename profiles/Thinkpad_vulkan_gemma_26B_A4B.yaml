@@ -21,7 +21,6 @@ serve:
   cont-batching: true
   jinja: true
   ctx-checkpoints: 0
-  no-kv-offload: true
 
 bench:
   r: 1

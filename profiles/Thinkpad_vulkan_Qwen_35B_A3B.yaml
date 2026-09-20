@@ -1,5 +1,5 @@
 name: "Thinkpad_vulkan_Qwen_35B_A3B"
-description: "Test qwen"
+description: "Qwen 3.6 35B-A3B control profile for Intel Vulkan/DZN; 8K context and Q4 KV cache."
 
 defaults:
   model: "qwen"
@@ -21,6 +21,8 @@ serve:
   cont-batching: true
   jinja: true
   ctx-checkpoints: 0
+  # Override the Intel-Vulkan engine default: this is the current tested
+  # Qwen 3.6 / DZN setting and keeps KV offload enabled.
   no-kv-offload: false
 
 bench:

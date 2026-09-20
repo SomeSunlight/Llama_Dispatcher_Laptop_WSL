@@ -53,6 +53,8 @@ The temporary OpenCL path used during Issue #1/#8 diagnosis is not retained as a
 
 Intel Vulkan path, explicitly selecting Vulkan device 0.
 
+The engine defaults to `no-kv-offload: true` for the laptop Vulkan baseline. This is a backend policy for this machine, not a universal model-family rule. Gemma Vulkan profiles inherit it. The Qwen 3.6 Intel-DZN control profile explicitly overrides it to `false`, keeping KV offload enabled for the separately tested Qwen path.
+
 ### `vulkan-rtx500`
 
 RTX 500 Ada Vulkan path, explicitly selecting Vulkan device 1.
