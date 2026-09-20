@@ -11,6 +11,7 @@ common:
   threads: 16
   cache-type-k: "q8_0"
   cache-type-v: "q8_0"
+  flash-attn: true
   n-gpu-layers: 6
   ot: "per_layer_token_embd\\.weight=CPU"
   override-tensor: "token_embd.*=CPU,output.*=CPU"
@@ -24,6 +25,7 @@ serve:
   parallel: 1
   cont-batching: true
   jinja: true
+  # Standalone profile defaults. Ensemble mode uses ensemble.engine host/port instead.
   port: 8081
   host: "0.0.0.0"
   spec-type: "draft-mtp"
