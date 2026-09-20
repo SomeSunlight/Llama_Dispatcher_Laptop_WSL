@@ -72,7 +72,7 @@ The Dispatcher merge/compile logic keeps these two cases separate: direct profil
 ## Ensembles
 
 - `thinkpad-sycl` — current Intel SYCL / Level Zero ensemble using `Thinkpad_SYCL_gemma_26B_A4B`.
-- `thinkpad` — Intel Vulkan ensemble using `Thinkpad_vulkan_gemma_26B_A4B`.
+- `thinkpad-vulkan` — Intel Vulkan ensemble using `Thinkpad_vulkan_gemma_26B_A4B`.
 
 Both expose:
 
