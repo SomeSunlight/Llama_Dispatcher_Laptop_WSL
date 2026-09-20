@@ -1,13 +1,14 @@
-# Intel Vulkan engine for the Laptop instance.
+# Intel Vulkan engine for the Laptop_WSL instance.
+# AI Workstation supplies the concrete llama.cpp binary directory at runtime.
+
 environment:
-  # Keep GPU selection with the engine so callers never need to remember it.
   GGML_VK_VISIBLE_DEVICES: "0"
 
 common:
   n-gpu-layers: 99
   split-mode: none
   main-gpu: 0
-  flash-attn: on
+  flash-attn: true
 
 serve:
   no-kv-offload: true
