@@ -5,10 +5,8 @@ environment:
   GGML_VK_VISIBLE_DEVICES: "1"
 
 common:
-  n-gpu-layers: 99
   split-mode: none
   main-gpu: 0
-  flash-attn: true
 
 serve:
   no-kv-offload: true
