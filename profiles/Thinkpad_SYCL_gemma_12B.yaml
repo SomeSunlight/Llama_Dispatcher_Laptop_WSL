@@ -1,5 +1,6 @@
 name: "Thinkpad_SYCL_gemma_12B"
 description: "Gemma 4 12B QAT profile for the Intel integrated GPU through SYCL/Level Zero; 16K context with conservative 256 batch and ubatch settings."
+# Attention: Not a MoE Model and therefore not faster than Gemma 26B_A4B
 
 defaults:
   model: "gemma"

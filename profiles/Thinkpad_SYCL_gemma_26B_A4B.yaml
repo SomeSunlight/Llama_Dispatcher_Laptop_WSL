@@ -7,14 +7,17 @@ defaults:
 
 common:
   m: "${LLAMA_MODEL_ROOT}/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf"
-  c: 16384
+  c: 16384  # probably already on the limits
   threads: 6
   cache-type-k: "q4_0"
   cache-type-v: "q4_0"
   flash-attn: true
-  n-gpu-layers: 99
+  n-gpu-layers: 4 // 4 layers on GPU, rest on CPU, 99 not possible, crashes windows. In between perhaps possible
 
 serve:
+  #mmproj: "${LLAMA_MODEL_ROOT}/... right model here"
+  # image-min-tokens: 300
+  # image-max-tokens: 1120
   ubatch-size: 2048
   batch-size: 2048
   parallel: 1

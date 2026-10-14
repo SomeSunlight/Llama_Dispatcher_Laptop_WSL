@@ -1,5 +1,6 @@
 name: "Thinkpad_vulkan_gemma_12B"
 description: "Gemma 4 12B QAT profile for Intel Vulkan experiments; currently uses a 64K context with GPU layer offload explicitly disabled."
+# Attention: Not a MoE Model and therefore not faster than Gemma 26B_A4B
 
 defaults:
   model: "gemma"

@@ -1,0 +1,34 @@
+# Intel SYCL / Level Zero ensemble for Laptop_WSL.
+# Runtime paths come from the launcher; GPU selection comes from engines/sycl.yaml.
+# Attention: Not a MoE Model and therefore not faster than Gemma 26B_A4B
+# Therefore not yet tested
+
+defaults:
+  engine: "sycl"
+
+dispatcher:
+  port: 8001
+
+engine:
+  port: 8081
+  host: "0.0.0.0"
+  models-max: 1
+
+models:
+  - profile: "Thinkpad_SYCL_gemma_12B"
+    alias: "sparringpartner"
+    load-on-startup: true
+    chat_template_kwargs:
+      enable_thinking: true
+
+  - profile: "Thinkpad_SYCL_gemma_12B"
+    alias: "agent"
+    target: "sparringpartner"
+    chat_template_kwargs:
+      enable_thinking: false
+    sampling:
+      temperature: 0.3
+      top-k: 20
+      top-p: 0.9
+      min-p: 0.1
+      repeat-penalty: 1.1
